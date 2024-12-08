@@ -1,24 +1,51 @@
+
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Positive Gedanken</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Positive Gedanken</h1>
-  </header>
-  <main>
-    <div class="affirmation-container">
-      <p id="affirmation">Willkommen! Drücke auf "Nächste", um zu starten.</p>
-      <button id="next-button">Nächste Affirmation</button>
+    <h1>Emotion Tracker</h1>
+    <p>Wie fühlst du dich gerade? Wähle eine Emotion:</p>
+    <div class="emotion-grid">
+        <div class="emotion" onclick="showFeedback('glücklich')">😊 Glücklich</div>
+        <div class="emotion" onclick="showFeedback('traurig')">😢 Traurig</div>
+        <div class="emotion" onclick="showFeedback('gestresst')">😰 Gestresst</div>
+        <div class="emotion" onclick="showFeedback('ruhig')">😌 Ruhig</div>
+        <div class="emotion" onclick="showFeedback('wütend')">😡 Wütend</div>
+        <div class="emotion" onclick="showFeedback('ängstlich')">😟 Ängstlich</div>
     </div>
-  </main>
-  <footer>
-    <p>Entwickelt von Tom</p>
-  </footer>
-  <script src="script.js"></script>
+    <div id="feedback"></div>
+    <div id="tools">
+        <h3>Empfohlene Aktivität</h3>
+        <p id="suggestion">Wähle eine Stimmung, um Vorschläge zu sehen.</p>
+    </div>
+    <div id="journal">
+        <h3>Deine Notiz:</h3>
+        <textarea id="note" rows="5" placeholder="Schreibe hier etwas..."></textarea><br>
+        <button onclick="saveEntry()">Speichern</button>
+        <div id="entries"></div>
+    </div>
+    <div id="stats">
+        <h3>Stimmungsstatistik</h3>
+        <ul id="emotion-stats"></ul>
+    </div>
+    <div id="filter">
+        <h3>Filter:</h3>
+        <select id="emotionFilter" onchange="filterEntries()">
+            <option value="alle">Alle</option>
+            <option value="glücklich">Glücklich</option>
+            <option value="traurig">Traurig</option>
+            <option value="gestresst">Gestresst</option>
+            <option value="ruhig">Ruhig</option>
+            <option value="wütend">Wütend</option>
+            <option value="ängstlich">Ängstlich</option>
+        </select>
+        <button onclick="exportEntries()">Einträge exportieren</button>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
