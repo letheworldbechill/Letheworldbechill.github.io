@@ -1,70 +1,74 @@
-/* Allgemeine Stile */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f0f4f8;
-  color: #333;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
 }
-
-/* Header */
-header {
-  background-color: #4caf50;
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
-}
-
 h1 {
-  margin: 0;
-  font-size: 1.8rem;
+    color: #4CAF50;
 }
-
-/* Main */
-main {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 20px;
 }
-
-.affirmation-container {
-  text-align: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.emotion {
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #f9f9f9;
+    transition: background 0.3s;
 }
-
-#affirmation {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  color: #555;
+.emotion:hover {
+    background: #e3f2fd;
 }
-
+#feedback, #tools {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px dashed #4CAF50;
+    border-radius: 10px;
+    background: #f0fff0;
+    display: none;
+}
+#journal, #stats, #filter {
+    margin-top: 30px;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+#entries p {
+    margin: 5px 0;
+}
 button {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+@media (max-width: 600px) {
+    .emotion-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    textarea {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+    .emotion-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
-/* Footer */
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 0.5rem 0;
-  font-size: 0.8rem;
-}
