@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+        .emotion {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #f9f9f9;
+            transition: background 0.3s;
+        }
+        .emotion:hover {
+            background: #e3f2fd;
+        }
+        #feedback, #tools {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            background: #f0fff0;
+            display: none;
+        }
+        #journal, #stats, #filter {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #entries p {
+            margin: 5px 0;
+        }
+        button {
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .emotion-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            textarea {
+                width: 100%;
+                font-size: 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+            .emotion-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Emotion Tracker</h1>
+    <p>Wie fühlst du dich gerade? Wähle eine Emotion:</p>
+    <div class="emotion-grid">
+        <div class="emotion" onclick="showFeedback('glücklich')">😊 Glücklich</div>
+        <div class="emotion" onclick="showFeedback('traurig')">😢 Traurig</div>
+        <div class="emotion" onclick="showFeedback('gestresst')">😰 Gestresst</div>
+        <div class="emotion" onclick="showFeedback('ruhig')">😌 Ruhig</div>
+        <div class="emotion" onclick="showFeedback('wütend')">😡 Wütend</div>
+        <div class="emotion" onclick="showFeedback('ängstlich')">😟 Ängstlich</div>
+    </div>
+    <div id="feedback"></div>
+    <div id="tools">
+        <h3>Empfohlene Aktivität</h3>
+        <p id="suggestion">Wähle eine Stimmung, um Vorschläge zu sehen.</p>
+    </div>
+    <div id="journal">
+        <h3>Deine Notiz:</h3>
+        <textarea id="note" rows="5" placeholder="Schreibe hier etwas..."></textarea><br>
+        <button onclick="saveEntry()">Speichern</button>
+        <div id="entries"></div>
+    </div>
+    <div id="stats">
+        <h3>Stimmungsstatistik</h3>
+        <ul id="emotion-stats"></ul>
+    </div>
+    <div id="filter">
+        <h3>Filter:</h3>
+        <select id="emotionFilter" onchange="filterEntries()">
+            <option value="alle">Alle</option>
+            <option value="glücklich">Glücklich</option>
+            <option value="traurig">Traurig</option>
+            <option value="gestresst">Gestresst</option>
+            <option value="ruhig">Ruhig</option>
+            <option value="wütend">Wütend</option>
+            <option value="ängstlich">Ängstlich</option>
+        </select>
+        <button onclick="exportEntries()">Einträge exportieren</button>
+    </div>
+
+    <script>
+        let moodEntries = [];
+        const moodCount = {
+            glücklich: 0,
+            traurig: 0,
+            gestresst: 0,
+            ruhig: 0,
+            wütend: 0,
+            ängstlich: 0,
+        };
+
+        function showFeedback(emotion) {
+            const feedback = document.getElementById('feedback');
+            const suggestions = {
+                glücklich: "Feiere diesen Moment! Vielleicht möchtest du ein Foto machen oder dich jemandem mitteilen.",
+                traurig: "Nimm dir Zeit für dich. Vielleicht hilft dir ein beruhigendes Lied oder eine kurze Pause.",
+                gestresst: "Wie wäre es mit einer 5-minütigen Atemübung? Konzentriere dich auf deinen Atem.",
+                ruhig: "Genieße die Ruhe. Lies ein Buch oder mach einen Spaziergang.",
+                wütend: "Atme tief durch. Vielleicht hilft es dir, die Gedanken niederzuschreiben.",
+                ängstlich: "Lenke dich mit etwas Positivem ab, wie einem Film oder einem Gespräch mit einem Freund."
+            };
+
+            feedback.textContent = suggestions[emotion];
+            feedback.style.display = 'block';
+
+            document.getElementById('suggestion').textContent = suggestions[emotion];
+
+            moodCount[emotion]++;
+            updateStats();
+        }
+
+        function saveEntry() {
+            const note = document.getElementById('note').value.trim();
+            const selectedEmotion = document.querySelector('.selected')?.textContent || 'Keine Stimmung';
+            const date = new Date().toLocaleDateString();
+
+            if (note) {
+                moodEntries.push({ emotion: selectedEmotion, note, date });
+                saveToLocal();
+                document.getElementById('note').value = '';
+                updateEntries();
+            } else {
+                alert('Bitte eine Notiz eingeben!');
+            }
+        }
+
+        function updateEntries() {
+            const entriesDiv = document.getElementById('entries');
+            entriesDiv.innerHTML = '<h4>Gespeicherte Einträge:</h4>';
+            moodEntries.forEach(({ emotion, note, date }) => {
+                entriesDiv.innerHTML += `<p><strong>${emotion}</strong> (${date}): ${note}</p>`;
+            });
+        }
+
+        function filterEntries() {
+            const filter = document.getElementById('emotionFilter').value;
+            const entriesDiv = document.getElementById('entries');
+            entriesDiv.innerHTML = '<h4>Gefilterte Einträge:</h4>';
+
+            const filteredEntries = moodEntries.filter(entry => filter === 'alle' || entry.emotion === filter);
+            filteredEntries.forEach(({ emotion, note, date }) => {
+                entriesDiv.innerHTML += `<p><strong>${emotion}</strong> (${date}): ${note}</p>`;
+            });
+        }
+
+        function exportEntries() {
+            const blob = new Blob([JSON.stringify(moodEntries, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'mood_entries.json';
+            link.click();
+        }
+
+        function updateStats() {
+            const statsList = document.getElementById('emotion-stats');
+            statsList.innerHTML = '';
+            Object.entries(moodCount).forEach(([emotion, count]) => {
+                statsList.innerHTML += `<li>${emotion}: ${count} Mal gewählt</li>`;
+            });
+        }
+
+        function saveToLocal() {
+            localStorage.setItem('moodEntries', JSON.stringify(moodEntries));
+        }
+
+        function loadFromLocal() {
+            const savedEntries = localStorage.getItem('moodEntries');
+            if (savedEntries) {
+                moodEntries = JSON.parse(savedEntries);
+                updateEntries();
+            }
+        }
+
+        window.onload = loadFromLocal;
+    </script>
+</body>
+</html>
